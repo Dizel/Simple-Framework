@@ -1,0 +1,33 @@
+ABOUT THE FRAMEWORK
+=============
+
+"What?! Another PHP framework?!"
+Yes. And No. It's so simple you should try at least once.
+
+SimplePHP don't use any "convention over config" stuff, you just write your class and control all the flux.
+
+In fact, it only make the URL route for a better SEO. If you navigate to http://localhost it will open the function index() in Home.class.php (yes, just like CakePHP).
+
+It's a framework to use when you want to build a simple and quickly system.
+
+How to use
+=============
+1) Make sure the following dirs are writable:
+- /SimpleClasses/templates_c
+- /SimpleClasses/cache
+- /templates
+
+2) The class name will be your URL first path. The function name will be the second path. Example:
+URL: /simple/framework
+Class: Simple
+Function: framework
+
+3) Every class must have a constructor to receive Smarty. You control the flux beyond this point.
+
+Roadmap
+==============
+
+1) Make it more dynamic
+2) More url options
+3) Improve the speed
+4) <put your suggestion here>
