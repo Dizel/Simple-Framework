@@ -9,21 +9,27 @@ session_start();
 require_once('Database.class.php');
 require_once('SimpleConfigs.php');
 require_once('SimpleLibs/Smarty/Smarty.class.php');
+require_once('SimpleLibs/Savant/Savant3.php');
 
 class Base
 {
 	
-	protected $smarty = '';
+	protected $template = '';
 	
 	public function __construct() {
 		
-		// smarty init and config
-		$this->smarty = new Smarty();
-		$this->smarty->debugging = SMARTY_DEBUG;
-		$this->smarty->template_dir = MAIN_SIMPLE_PATH.'/templates/';
-		$this->smarty->compile_dir = MAIN_SIMPLE_PATH.'/SimpleClasses/templates_c/';
-		$this->smarty->cache_dir = MAIN_SIMPLE_PATH.'/SimpleClasses/cache/';
-		$this->smarty->config_dir = MAIN_SIMPLE_PATH.'/SimpleClasses/configs/';
+		if(TEMPLATE_SYSTEM == 'smarty') {
+			// smarty init and config
+			$this->template = new Smarty();
+			$this->template->debugging = SMARTY_DEBUG;
+			$this->template->template_dir = MAIN_SIMPLE_PATH.'/templates/';
+			$this->template->compile_dir = MAIN_SIMPLE_PATH.'/SimpleClasses/templates_c/';
+			$this->template->cache_dir = MAIN_SIMPLE_PATH.'/SimpleClasses/cache/';
+			$this->template->config_dir = MAIN_SIMPLE_PATH.'/SimpleClasses/configs/';
+		} else {
+			$this->template = new Savant3(array('template_path' => MAIN_SIMPLE_PATH.'/templates/'));
+		}
+		
 	}
 	
 	
@@ -41,7 +47,7 @@ class Base
 			// two paths means it's inside some class
 			$path = explode('/', strtolower($path));
 			
-			$page = new $path[0]($this->smarty);
+			$page = new $path[0]($this->template);
 			
 			// check if we have the method
 			$exists = method_exists($page,$path[1]);
@@ -50,12 +56,16 @@ class Base
 			} else {
 				// no, no method for you :(
 				// call only the template
-				$this->smarty->display($path[0] . '/' . $path[1] . '.tpl');
+				if(TEMPLATE_SYSTEM == 'smarty') {
+					$this->template->display($path[0] . '/' . $path[1] . '.tpl');
+				} else {
+					$this->template->display($path[0] . '/' . $path[1] . '.tpl.php');
+				}
 			}
 		} else {
 			// last chance: it's in Home class
 			$path = strtolower($path);
-			$home = new Home($this->smarty);
+			$home = new Home($this->template);
 			
 			if($path == '') {
 				// no specific method, send to index
@@ -69,7 +79,11 @@ class Base
 			} else {
 				// no, no method for you :(
 				// call only the template
-				$this->smarty->display(HOME_PATH . '/' . $path . '.tpl');
+				if(TEMPLATE_SYSTEM == 'smarty') {
+					$this->template->display(HOME_PATH . '/' . $path . '.tpl');
+				} else {
+					$this->template->display(HOME_PATH . '/' . $path . '.tpl.php');
+				}
 			}
 			
 		}
@@ -82,7 +96,7 @@ function print_me($arr, $stop = 1) {
 	if($stop==1) exit;
 }
 
-// função de autoload do php para pegar direto as clases sem precisar dar require once para cada uma
+// php autoloading function
 function __autoload($class_name) {
     require_once './' . CLASS_FILES_PATH . '/' . $class_name . '.class.php';
 }

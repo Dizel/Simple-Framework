@@ -7,22 +7,22 @@
 
 class Home extends Database
 {
-	var $smarty = '';
+	var $template = '';
 	
-	function __construct($smt) {
-		$this->smarty = $smt;	
+	function __construct($tpl) {
+		$this->template = $tpl;
 	}
 	
-	function index() {
+	function smarty() {
 		
-  		$this->smarty->assign('hello','It Works!');
-		$this->smarty->display('index.tpl');
+  		$this->template->assign('hello','It Works with Smarty!');
+		$this->template->display('index.tpl');
   		
 	}
 	
-	function simple() {
-		$this->smarty->assign('simple','It\'s simple, did you see?');
-		$this->smarty->display('simple.tpl');
+	function savant() {
+  		$this->template->hello = 'It Works with Savant!';
+		$this->template->display('index.tpl.php');
 
 	}
 	
